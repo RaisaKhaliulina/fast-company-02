@@ -13,10 +13,23 @@ module.exports = {
   },
   plugins: ["react"],
   rules: {
+    camelcase: "off",
     indent: ["error", 2],
     semi: [2, "always"],
-    quotes: ["error", "double"],
-    "space-before-function-paren": ["error", "never"],
+
+    "space-before-function-paren": [
+      "error",
+      { anonymous: "always", named: "never" },
+    ],
     "comma-dangle": ["error", "only-multiline"],
+    "no-tabs": ["error", { allowIndentationTabs: true }],
+    "no-trailing-spaces": ["error", { skipBlankLines: true }],
+    quotes: [
+      "error",
+      "double",
+      {
+        allowTemplateLiterals: true,
+      },
+    ],
   },
 };
