@@ -12,7 +12,7 @@ const Users = ({ users: allUsers, ...rest }) => {
   const [professions, setProfession] = useState();
   const [selectedProf, setSelectedProf] = useState();
   const [sortBy, setSortBy] = useState({ path: "name", order: "asc" });
-  const pageSize = 2;
+  const pageSize = 8;
   const [users, setUsers] = useState(api.users.fetchAll());
   useEffect(() => {
     api.users.fetchAll().then((data) => setUsers(data));
@@ -46,58 +46,66 @@ const Users = ({ users: allUsers, ...rest }) => {
   const handleSort = (item) => {
     setSortBy(item);
   };
-  const filteredUsers = selectedProf
-    ? allUsers.filter(
-      (user) =>
-        JSON.stringify(user.profession) === JSON.stringify(selectedProf)
-    )
-    : allUsers;
-  const count = filteredUsers.length;
 
-  const sortedUsers = _.orderBy(filteredUsers, [sortBy.path], [sortBy.order]);
-  const usersCrop = paginate(sortedUsers, currentPage, pageSize);
-  const clearFilter = () => {
-    setSelectedProf();
-  };
-  return (
-    <div className="d-flex">
-      {professions && (
-        <div className="d-flex flex-column flex-shrink-0 p-3">
-          <GroupList
-            selectedItem={selectedProf}
-            items={professions}
-            onItemSelect={handleProfessionSelect}
-          />
-          <button className="btn btn-secondary mt-2" onClick={clearFilter}>
-            {""}
+  if (users) {
+    let filteredUsers;
+    if (selectedProf) {
+      filteredUsers = users.filter(
+        (user) =>
+          JSON.stringify(user.profession) ===
+          JSON.stringify(selectedProf)
+      );
+    } else {
+      filteredUsers = users;
+    }
+    const count = filteredUsers.length;
+    const sortedUsers = _.orderBy(filteredUsers, [sortBy.path], [sortBy.order]);
+    const usersCrop = paginate(sortedUsers, currentPage, pageSize);
+    const clearFilter = () => {
+      setSelectedProf();
+    };
+    return (
+      <div className="d-flex">
+        {professions && (
+          <div className="d-flex flex-column flex-shrink-0 p-3">
+            <GroupList
+              selectedItem={selectedProf}
+              items={professions}
+              onItemSelect={handleProfessionSelect}
+            />
+            <button className="btn btn-secondary mt-2" onClick={clearFilter}>
+              {""}
             Очистить
-          </button>
-        </div>
-      )}
-      <div className="d-flex flex-column">
-        <SearchStatus length={count} />
-        {count > 0 && (
-          <UserTable
-            users={usersCrop}
-            onSort={handleSort}
-            selectedSort={sortBy}
-            onDelete={handleDelete}
-            onToggleBookMark={handleToggleBookMark}
-          />
+            </button>
+          </div>
         )}
-        <div className="d-flex justify-content-center">
-          <Pagination
-            itemsCount={count}
-            pageSize={pageSize}
-            currentPage={currentPage}
-            onPageChange={handlePageChange}
-          />
+        <div className="d-flex flex-column">
+          <SearchStatus length={count} />
+          {count > 0 && (
+            <UserTable
+              users={usersCrop}
+              onSort={handleSort}
+              selectedSort={sortBy}
+              onDelete={handleDelete}
+              onToggleBookMark={handleToggleBookMark}
+            />
+          )}
+          <div className="d-flex justify-content-center">
+            <Pagination
+              itemsCount={count}
+              pageSize={pageSize}
+              currentPage={currentPage}
+              onPageChange={handlePageChange}
+            />
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
+  return "loading...";
 };
 Users.propTypes = {
-  users: PropTypes.object.isRequired,
+  users: PropTypes.oneOfType([PropTypes.object, PropTypes.array])
 };
+
 export default Users;

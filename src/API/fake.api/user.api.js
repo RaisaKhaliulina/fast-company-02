@@ -1,7 +1,7 @@
 import { professionsObject as professions } from "./professions.api.js";
 import { qualities } from "./qualities.api.js";
 
-const users = [
+export const users = [
   {
     _id: "67rdca3eeb7f6fgeed471815",
     name: "Джон Дориан",
@@ -111,7 +111,6 @@ const users = [
     bookmark: false,
   },
 ];
-
 const fetchAll = () =>
   new Promise((resolve) => {
     window.setTimeout(function () {
